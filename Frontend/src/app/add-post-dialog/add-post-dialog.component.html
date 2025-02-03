@@ -1,0 +1,13 @@
+<h2 mat-dialog-title>Add a Post</h2>
+<div mat-dialog-content>
+  Please attach image and add caption
+  <input type="file" (change)="onFileSelected($event)" />
+  <div mat-form-field>
+    <div mat-label>Caption</div>
+    <input matInput (input)="onCaptionInput($event)">
+  </div>
+</div> 
+<div mat-dialog-actions>
+  <button mat-button (click)="onCancel()">Cancel</button>
+  <button mat-button (click)="onSavePost()">Post</button>
+</div>

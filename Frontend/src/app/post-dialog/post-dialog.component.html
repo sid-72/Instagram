@@ -1,0 +1,24 @@
+<h2 mat-dialog-title>{{ data.post.caption }}</h2>
+<div mat-dialog-content class="mat-dialog-contan">
+  <div class="d-flex justify-content-center mb-3">
+    <img [src]="data.post.image_path" class="img-fluid rounded" alt="{{ data.post }}">
+  </div>
+  <p class="post-caption">{{ data.post.caption }}</p>
+  <div *ngIf="data.post.comments && data.post.comments.length > 0" class="comments-section">
+    <h6 class="text-secondary">Comments:</h6>
+    <div class="comments-list">
+      <ul class="list-group list-group-flush">
+        <li class="list-group-item bg-light border-0" *ngFor="let comment of data.post.comments">
+          <strong class="text-primary">{{ comment.userId }}:</strong> {{ comment.content }}
+        </li>
+      </ul>
+    </div>
+  </div>
+  <div class="add-comment mt-3">
+    <input type="text" class="form-control" placeholder="Write a comment..." #commentRef>
+    <button class="btn btn-primary mt-2" (click)="addComment(commentRef.value, data.post.postId)">Post</button>
+  </div>
+</div>
+<div mat-dialog-actions class="dialog-actions">
+  <button mat-button color="primary" (click)="closeDialog()">Close</button>
+</div>

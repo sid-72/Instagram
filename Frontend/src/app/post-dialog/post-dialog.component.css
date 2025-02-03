@@ -1,0 +1,45 @@
+.dialog-title {
+    font-size: 1.5rem;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 1rem;
+  }
+  
+  .dialog-content {
+    text-align: center;
+  }
+  
+  .img-fluid {
+    max-width: 100%;
+    height: auto;
+  }
+  
+  .post-caption {
+    font-size: 1.2rem;
+    margin-bottom: 1rem;
+  }
+  
+  .comments-section {
+    text-align: left;
+    margin-top: 1rem;
+  }
+  
+  .comments-section h6 {
+    font-size: 1.1rem;
+    margin-bottom: 0.5rem;
+  }
+  
+  .comments-list {
+    max-height: 200px; /* Set the desired height */
+    overflow-y: auto; /* Enable vertical scrolling */
+  }
+  
+  .list-group-item {
+    padding: 0.5rem 1rem;
+  }
+  
+  .dialog-actions {
+    display: flex;
+    justify-content: center;
+    margin-top: 1rem;
+  }
