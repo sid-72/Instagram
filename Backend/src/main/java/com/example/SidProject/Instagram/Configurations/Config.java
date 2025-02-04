@@ -31,8 +31,8 @@ public class Config {
     }
 
     @Bean
-    AwsCredentials getAwsCredentials(@Value("${aws.access-key-id}") String accessKey,
-                                     @Value("${aws.secret-access-key}") String secretKey) {
+    AwsCredentials getAwsCredentials(@Value("${AWS_ACCESS_KEY_ID}") String accessKey,
+                                     @Value("${AWS_SECRET_ACCESS_KEY}") String secretKey) {
         return AwsBasicCredentials.create(accessKey, secretKey);
 
     }
@@ -45,4 +45,6 @@ public class Config {
                 .credentialsProvider(StaticCredentialsProvider.create(awsCredentials))
                 .build();
     }
+
+
 }
