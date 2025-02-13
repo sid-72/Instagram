@@ -12,7 +12,7 @@ export class CommentService {
   constructor() { }
 
   postComment(userId: string, postId: string, content: string): Observable<HttpResponse<string>> {
-      var feedUrl = `http://localhost:8080/comments`; 
+      var feedUrl = `https://instagram-tl17.onrender.com/comments`; 
       const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
       // make post request to the server
       //Comment comment = new Comment();

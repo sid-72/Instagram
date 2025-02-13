@@ -12,7 +12,7 @@ export class PostService {
   constructor() { }
 
   sendPost(userId: string, file: File, caption: string): Observable<HttpResponse<string>> {
-        var feedUrl = `http://localhost:8080/user/${userId}/post`; 
+        var feedUrl = `https://instagram-tl17.onrender.com/user/${userId}/post`; 
         const headers = new HttpHeaders(); // No need to set 'Content-Type' for FormData
         // make post request to the server
         //Comment comment = new Comment();

@@ -14,7 +14,7 @@ http = inject(HttpClient);
 
 
   getFeed(userId: string): Observable<Profile> {
-    const feedUrl = `http://localhost:8080/users/${userId}/details`; 
+    const feedUrl = `https://instagram-tl17.onrender.com/users/${userId}/details`; 
     return this.http.get<Profile>(feedUrl);
   }
 
