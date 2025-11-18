@@ -1,0 +1,7 @@
+flask==3.0.3
+langchain==0.3.7
+langchain-google-genai==2.0.5
+python-dotenv==1.0.1
+psycopg2-binary==2.9.9
+sqlalchemy==2.0.23
+

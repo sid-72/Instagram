@@ -25,7 +25,7 @@ public class Comment {
     @NonNull
     private User user;
 
-    public CommentDTO toDTO(Post post, User user) {
+    public CommentDTO toDTO() {
     
         return CommentDTO.builder()
                 .id(this.id)

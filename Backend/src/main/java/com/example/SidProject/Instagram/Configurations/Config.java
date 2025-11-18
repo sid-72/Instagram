@@ -5,6 +5,10 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import redis.clients.jedis.DefaultJedisClientConfig;
+import redis.clients.jedis.HostAndPort;
+import redis.clients.jedis.JedisClientConfig;
+import redis.clients.jedis.UnifiedJedis;
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
 import software.amazon.awssdk.auth.credentials.AwsCredentials;
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
@@ -44,6 +48,20 @@ public class Config {
                 .region(Region.of(region))  // Set your region
                 .credentialsProvider(StaticCredentialsProvider.create(awsCredentials))
                 .build();
+    }
+
+    @Bean
+    UnifiedJedis getUnifiedJedis(@Value("${REDIS_PASSWORD}") String password,
+                                 @Value("${redis.host}") String host) {
+        JedisClientConfig config = DefaultJedisClientConfig.builder()
+                .user("default")
+                .password(password)
+                .build();
+
+        return new UnifiedJedis(
+                new HostAndPort(host, 18648),
+                config
+        );
     }
 
 

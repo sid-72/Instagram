@@ -5,9 +5,13 @@ import com.example.SidProject.Instagram.DTO.PostResponse;
 import com.example.SidProject.Instagram.model.Post;
 import com.example.SidProject.Instagram.model.User;
 import com.example.SidProject.Instagram.repositories.PostRepository;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import redis.clients.jedis.UnifiedJedis;
+import redis.clients.jedis.json.Path2;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.GetObjectRequest;
@@ -18,6 +22,7 @@ import software.amazon.awssdk.services.s3.presigner.model.PresignedGetObjectRequ
 
 import java.io.IOException;
 import java.time.Duration;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -28,6 +33,8 @@ public class PostService {
     private PostRepository postRepository;
     private S3Client s3Client;
     private S3Presigner s3Presigner;
+    private UnifiedJedis reddis;
+    private ObjectMapper objectMapper;
 
 
     public String uploadPost(User user, MultipartFile file, String caption) {
@@ -59,6 +66,20 @@ public class PostService {
                 .build();
 
         postRepository.save(post);
+        // map post to PostResponse
+        PostResponse postResponse = PostResponse.builder()
+                .postId(post.getId())
+                .user(post.getUser())
+                .image_path(post.getImage_path())
+                .caption(post.getCaption())
+                .comments(Collections.EMPTY_LIST)
+                .build();
+        try {
+            reddis.jsonSet("post:" + postId, new Path2("$"), objectMapper.writeValueAsString(postResponse));
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+        System.out.println("post added in redis: " +  reddis.jsonGet("post:" + postId, new Path2("$")));
         return post.getId();
 
     }
