@@ -1,2 +1,3 @@
 databases:
   - name: instagram
+    plan: free
