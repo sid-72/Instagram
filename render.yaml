@@ -8,13 +8,15 @@ services:
       image:
         url: minio/minio:RELEASE.2025-09-07T16-13-09Z-cpuv1
 
-      # Start MinIO server on 9000, console on 9090
+      startCommand: minio server /data --address ":9000"
 
       envVars:
-        - key: MINIO_ACCESS_KEY
-          sync: false
-        - key: MINIO_SECRET_KEY
-          sync: false
+        # - key: MINIO_ROOT_USER
+        #   sync: false
+        # - key: MINIO_ROOT_PASSWORD
+        #   sync: false
+        - key: PORT
+          value: 9000
 
       # disk:
       #   name: minio-data
@@ -40,7 +42,3 @@ services:
           sync: false          # same as on MinIO service
         - key: MINIO_SECRET_KEY
           sync: false
-
-        # Typical Spring settings (tune as needed)
-        - key: SPRING_PROFILES_ACTIVE
-          value: prod
