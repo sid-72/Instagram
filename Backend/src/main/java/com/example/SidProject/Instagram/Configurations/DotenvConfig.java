@@ -9,7 +9,7 @@ public class DotenvConfig {
     @PostConstruct
     public void loadEnv() {
         Dotenv dotenv = Dotenv.configure()
-                .directory("Backend/.env")
+                .directory("./.env")
                 .ignoreIfMissing()
                 .load();
         dotenv.entries().forEach(entry ->

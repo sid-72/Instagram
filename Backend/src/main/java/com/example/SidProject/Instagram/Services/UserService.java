@@ -8,19 +8,15 @@ import com.example.SidProject.Instagram.model.Post;
 import com.example.SidProject.Instagram.model.User;
 import com.example.SidProject.Instagram.repositories.PostRepository;
 import com.example.SidProject.Instagram.repositories.UserRepository;
+import io.minio.GetPresignedObjectUrlArgs;
+import io.minio.MinioClient;
+import io.minio.PutObjectArgs;
+import io.minio.http.Method;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-import software.amazon.awssdk.core.sync.RequestBody;
-import software.amazon.awssdk.services.s3.S3Client;
-import software.amazon.awssdk.services.s3.model.GetObjectRequest;
-import software.amazon.awssdk.services.s3.model.PutObjectRequest;
-import software.amazon.awssdk.services.s3.presigner.S3Presigner;
-import software.amazon.awssdk.services.s3.presigner.model.GetObjectPresignRequest;
-import software.amazon.awssdk.services.s3.presigner.model.PresignedGetObjectRequest;
 
 import java.io.IOException;
-import java.time.Duration;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -29,9 +25,8 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class UserService {
     private final UserRepository userRepository;
-    private final S3Client s3Client;
+    private final MinioClient minioClient;
     private final PostRepository postRepository;
-    private S3Presigner s3Presigner;
 
 
 
@@ -64,21 +59,22 @@ public class UserService {
         String userId =  userDTO.getUserId();
         MultipartFile file =  userDTO.getProfileImage();
 
-        RequestBody requestBody = null;
+        String objectName = userId + "/profilePicture/" + file.getOriginalFilename();
+
         try {
-            requestBody = RequestBody.fromInputStream(file.getInputStream(), file.getSize());
-        } catch (IOException e) {
+            minioClient.putObject(
+                    PutObjectArgs.builder()
+                            .bucket("sidimagebucket")
+                            .object(objectName)
+                            .stream(file.getInputStream(), file.getSize(), -1)
+                            .contentType(file.getContentType())
+                            .build()
+            );
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
 
-
-        PutObjectRequest putObjectRequest = PutObjectRequest.builder()
-                .bucket("sidimagebucket")
-                .key(userId + "/profilePicture/" + file.getOriginalFilename())
-                .build();
-
-        s3Client.putObject(putObjectRequest, requestBody);
-        String imagePath = userId + "/profilePicture/" + file.getOriginalFilename();
+        String imagePath = objectName;
 
         User user = User.builder()
                 .id(userDTO.getUserId())
@@ -92,23 +88,20 @@ public class UserService {
 
     private void setSingedURLInPosts(List<Post> posts) {
         for(Post post: posts) {
+            try {
+                String preSignedURL = minioClient.getPresignedObjectUrl(
+                        GetPresignedObjectUrlArgs.builder()
+                                .method(Method.GET)
+                                .bucket("sidimagebucket")
+                                .object(post.getImage_path())
+                                .expiry(10 * 60)
+                                .build()
+                );
 
-            GetObjectRequest objectRequest = GetObjectRequest.builder()
-                    .bucket("sidimagebucket")
-                    .key(post.getImage_path())
-                    .build();
-
-            GetObjectPresignRequest presignRequest = GetObjectPresignRequest.builder()
-                    .signatureDuration(Duration.ofMinutes(10))  // The URL will expire in 10 minutes.
-                    .getObjectRequest(objectRequest)
-                    .build();
-
-            PresignedGetObjectRequest preSignedRequest = s3Presigner.presignGetObject(presignRequest);
-
-            String preSignedURL = preSignedRequest.url().toString();
-
-            post.setImage_path(preSignedURL);
-
+                post.setImage_path(preSignedURL);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
         }
     }
 

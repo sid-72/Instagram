@@ -2,15 +2,10 @@ package com.example.SidProject.Instagram.Configurations;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import io.minio.MinioClient;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
-import software.amazon.awssdk.auth.credentials.AwsCredentials;
-import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
-import software.amazon.awssdk.regions.Region;
-import software.amazon.awssdk.services.s3.S3Client;
-import software.amazon.awssdk.services.s3.presigner.S3Presigner;
 
 @Configuration
 public class Config {
@@ -22,29 +17,13 @@ public class Config {
     }
 
     @Bean
-    S3Client gets3Client(AwsCredentials awsCredentials,
-                         @Value("${aws.region}") String region) {
-        return S3Client.builder()
-                .region(Region.of(region))
-                .credentialsProvider(StaticCredentialsProvider.create(awsCredentials))
+    MinioClient minioClient(@Value("${minio.endpoint}") String endpoint,
+                            @Value("${minio.access-key}") String accessKey,
+                            @Value("${minio.secret-key}") String secretKey) {
+        return MinioClient.builder()
+                .endpoint(endpoint)
+                .credentials(accessKey, secretKey)
                 .build();
     }
-
-    @Bean
-    AwsCredentials getAwsCredentials(@Value("${AWS_ACCESS_KEY_ID}") String accessKey,
-                                     @Value("${AWS_SECRET_ACCESS_KEY}") String secretKey) {
-        return AwsBasicCredentials.create(accessKey, secretKey);
-
-    }
-
-    @Bean
-    S3Presigner getS3Presigner(AwsCredentials awsCredentials,
-                               @Value("${aws.region}") String region) {
-        return S3Presigner.builder()
-                .region(Region.of(region))  // Set your region
-                .credentialsProvider(StaticCredentialsProvider.create(awsCredentials))
-                .build();
-    }
-
 
 }

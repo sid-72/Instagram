@@ -1,11 +1,10 @@
 package com.example.SidProject.Instagram;
 
+import io.minio.MakeBucketArgs;
+import io.minio.MinioClient;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ConfigurableApplicationContext;
-import software.amazon.awssdk.services.s3.S3Client;
-import software.amazon.awssdk.services.s3.model.CreateBucketRequest;
-import software.amazon.awssdk.services.s3.model.CreateBucketResponse;
 
 @SpringBootApplication
 public class DemoApplication {
@@ -20,13 +19,17 @@ public class DemoApplication {
 				.GET() //
 				.build();
 		client.send()*/
-		S3Client s3Client= configurableApplicationContext.getBean(S3Client.class);
-		CreateBucketRequest createBucketRequest = CreateBucketRequest.builder()
-				.bucket("testsid1")
-				.build();
-
-		CreateBucketResponse createBucketResponse = s3Client.createBucket(createBucketRequest);
-		System.out.println(createBucketResponse);
+		MinioClient minioClient = configurableApplicationContext.getBean(MinioClient.class);
+		try {
+			minioClient.makeBucket(
+					MakeBucketArgs.builder()
+							.bucket("testsid1")
+							.build()
+			);
+			System.out.println("Bucket created: testsid1");
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
 
 
 	}
