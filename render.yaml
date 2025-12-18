@@ -1,0 +1,46 @@
+services:
+    - type: web
+      name: instagram-object-storage
+      runtime: image
+      region: oregon
+      plan: free
+
+      image:
+        url: minio/minio:RELEASE.2025-09-07T16-13-09Z-cpuv1
+
+      # Start MinIO server on 9000, console on 9090
+
+      envVars:
+        - key: MINIO_ACCESS_KEY
+          sync: false
+        - key: MINIO_SECRET_KEY
+          sync: false
+
+      # disk:
+      #   name: minio-data
+      #   mountPath: /data
+      #   sizeGB: 10
+
+  # 2) Instagram backend (Spring Boot) service
+    - type: web
+      name: instagram-backend
+      env: docker
+      region: oregon
+      plan: free
+      autoDeploy: true
+
+      dockerfilePath: ./Backend/Dockerfile
+      dockerContext: ./Backend
+
+      envVars:
+        # Point backend to MinIO service inside Render's private network
+        - key: MINIO_ENDPOINT
+          value: http://instagram-object-storage:9000
+        - key: MINIO_ACCESS_KEY
+          sync: false          # same as on MinIO service
+        - key: MINIO_SECRET_KEY
+          sync: false
+
+        # Typical Spring settings (tune as needed)
+        - key: SPRING_PROFILES_ACTIVE
+          value: prod
