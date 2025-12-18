@@ -1,44 +1,25 @@
 services:
-    - type: web
-      name: instagram-object-storage
-      runtime: image
-      region: oregon
-      plan: free
+  # Deploy MinIO exactly as defined in the example repo
+  - type: web
+    repo: https://github.com/render-examples/minio.git
 
-      image:
-        url: minio/minio:RELEASE.2025-09-07T16-13-09Z-cpuv1
+  # Your backend
+  - type: web
+    name: instagram-backend
+    env: docker
+    region: oregon
+    plan: free
+    autoDeploy: true
 
-      startCommand: minio server /data --address ":9000"
+    dockerfilePath: ./Backend/Dockerfile
+    dockerContext: ./Backend
 
-      envVars:
-        # - key: MINIO_ROOT_USER
-        #   sync: false
-        # - key: MINIO_ROOT_PASSWORD
-        #   sync: false
-        - key: PORT
-          value: 9000
+    envVars:
+      # INTERNAL S3 API (not the console)
+      - key: MINIO_ENDPOINT
+        value: http://minio-server:9000
 
-      # disk:
-      #   name: minio-data
-      #   mountPath: /data
-      #   sizeGB: 10
-
-  # 2) Instagram backend (Spring Boot) service
-    - type: web
-      name: instagram-backend
-      env: docker
-      region: oregon
-      plan: free
-      autoDeploy: true
-
-      dockerfilePath: ./Backend/Dockerfile
-      dockerContext: ./Backend
-
-      envVars:
-        # Point backend to MinIO service inside Render's private network
-        - key: MINIO_ENDPOINT
-          value: http://instagram-object-storage:9000
-        - key: MINIO_ACCESS_KEY
-          sync: false          # same as on MinIO service
-        - key: MINIO_SECRET_KEY
-          sync: false
+      - key: MINIO_ROOT_USER
+        sync: false
+      - key: MINIO_ROOT_PASSWORD
+        sync: false
