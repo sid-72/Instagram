@@ -16,7 +16,6 @@ import java.util.List;
 
 @RestController
 @AllArgsConstructor
-@CrossOrigin(origins = "http://localhost:4200")
 public class EmployeeController {
     private UserRepository userRepository;
     private EmployeeService employeeService;
@@ -27,7 +26,7 @@ public class EmployeeController {
     }
 
     @PostMapping(path = "/user/{user_id}/post")
-    public String postPhoto(@PathVariable String user_id,
+        public String postPhoto(@PathVariable String user_id,
                             @RequestParam("file")MultipartFile file,
                             @RequestParam("caption") String caption)  {
         User user = userRepository.findById(user_id).get();

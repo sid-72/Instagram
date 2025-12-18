@@ -12,7 +12,7 @@ export class FeedServiceService {
 
 
   getFeed(userId: string): Observable<Array<FeedItem>> {
-    var feedUrl = `https://instagram-tl17.onrender.com/feed/{userId}`; 
+    var feedUrl = `https://instagram-backend-d129.onrender.com/feed/{userId}`; 
     return this.http.get<Array<FeedItem>>(feedUrl);
   }
 }

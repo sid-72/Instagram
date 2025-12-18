@@ -1,9 +1,46 @@
 services:
-  # Deploy MinIO exactly as defined in the example repo
   - type: web
-    repo: https://github.com/render-examples/minio.git
+    name: minio-server
+    healthCheckPath: /minio/health/live
+    runtime: image
+    plan: free
+    image:
+      url: docker.io/minio/minio:latest
+    dockerCommand: minio server /data --address $HOST:$PORT
+    # Use the following 'dockerCommand' if removing the 'minio-console'
+    # web service
+    # dockerCommand: minio server /data --address $HOST:$PORT
+    autoDeploy: false
+    # disk:
+    #   name: data
+    #   mountPath: /data
+    envVars:
+      # - key: MINIO_ROOT_USER
+      #   sync: false
+      # - key: MINIO_ROOT_PASSWORD
+      #   sync: false
+      - key: HOST
+        value: "0.0.0.0"
+      - key: PORT
+        value: 10000
+    # Uncomment the following key/value pair if you are removing the
+    # 'minio-console' web service
+    # - key: MINIO_BROWSER
+    #   value: "off"
 
-  # Your backend
+  # - type: web
+  #   name: minio-console
+  #   plan: free
+  #   runtime: image
+  #   image:
+  #     url: docker.io/minio/minio:latest
+  #   dockerCommand: minio server /data --console-address 0.0.0.0:$PORT
+  #   envVars:
+  #     - key: PORT
+  #       value: 9090
+
+
+  # 2) Instagram backend (Spring Boot) service
   - type: web
     name: instagram-backend
     env: docker
@@ -15,11 +52,25 @@ services:
     dockerContext: ./Backend
 
     envVars:
-      # INTERNAL S3 API (not the console)
+      # Point backend to MinIO service inside Render's private network
       - key: MINIO_ENDPOINT
-        value: http://minio-server:9000
+        value: https://minio-server-d129.onrender.com
+      - key: MINIO_ACCESS_KEY
+        sync: false          # same as on MinIO service
+      - key: MINIO_SECRET_KEY
+        sync: false
 
-      - key: MINIO_ROOT_USER
-        sync: false
-      - key: MINIO_ROOT_PASSWORD
-        sync: false
+  # 3) Instagram frontend (Angular) service
+  - type: web
+    name: instagram-frontend
+    runtime: docker
+    region: oregon
+    plan: free
+    autoDeploy: true
+
+    dockerfilePath: ./Frontend/Dockerfile
+    dockerContext: ./Frontend
+
+    envVars:
+      - key: NODE_ENV
+        value: production

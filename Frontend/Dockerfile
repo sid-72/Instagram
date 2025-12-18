@@ -19,7 +19,8 @@ RUN npm run build --prod
 FROM nginx:alpine
 
 # Copy built Angular app to Nginx default directory
-COPY --from=build /app/dist/* /usr/share/nginx/html
+COPY --from=build /app/dist/instagram/browser /usr/share/nginx/html
+COPY nginx.conf /etc/nginx/conf.d/default.conf
 
 # Expose port 80
 EXPOSE 80

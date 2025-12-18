@@ -7,7 +7,7 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class AuthService {
-  private apiUrl = 'https://instagram-tl17.onrender.com/users/login'; // Replace with your API endpoint
+  private apiUrl = 'https://instagram-backend-d129.onrender.com/users/login'; // Replace with your API endpoint
 
   constructor(private http: HttpClient) { }
 

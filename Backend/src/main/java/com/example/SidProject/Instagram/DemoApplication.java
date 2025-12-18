@@ -21,12 +21,12 @@ public class DemoApplication {
 		client.send()*/
 		MinioClient minioClient = configurableApplicationContext.getBean(MinioClient.class);
 		try {
-			minioClient.makeBucket(
-					MakeBucketArgs.builder()
-							.bucket("testsid1")
-							.build()
-			);
-			System.out.println("Bucket created: testsid1");
+			 minioClient.makeBucket(
+			 		MakeBucketArgs.builder()
+			 				.bucket("sidimagebucket")
+			 				.build()
+			 );
+			 System.out.println("Bucket created: sidimagebucket");
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
