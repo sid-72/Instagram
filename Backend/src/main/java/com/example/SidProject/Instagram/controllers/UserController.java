@@ -23,12 +23,15 @@ public class UserController {
     @Autowired
     private PostRepository postRepository;
 
-
     @PostMapping("/users")
     String addUser(@ModelAttribute UserDTO userDTO) {
-        userService.addUser(userDTO);
-        return "";
+        if (!userService.isUsernameExists(userDTO.getUserId())) {
+            userService.addUser(userDTO);
+            return "user added";
+        }
+        return "user already exists";
     }
+
     @GetMapping("/users/{userId}")
     User getUser(@PathVariable String userId) {
         return userService.getUser(userId).get();
@@ -36,8 +39,8 @@ public class UserController {
 
     @PostMapping("/users/login")
     String login(@RequestBody LoginCredentials loginCredentials) {
-        User user = userRepository.getUserByName(loginCredentials.getUsername());
-        if(user == null){
+        User user = userRepository.getUserByName(loginCredentials.getUsername()).orElse(null);
+        if (user == null) {
             return "failed";
         }
         return user.getId();

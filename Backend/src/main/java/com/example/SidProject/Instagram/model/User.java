@@ -14,7 +14,7 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 @NoArgsConstructor
-@JsonIgnoreProperties({"posts", "comments"})
+@JsonIgnoreProperties({ "posts", "comments" })
 @Table(name = "Users")
 public class User {
     @Id
@@ -26,5 +26,4 @@ public class User {
     private List<Post> posts;
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "user", cascade = CascadeType.ALL)
     private List<Comment> comments;
-
 }

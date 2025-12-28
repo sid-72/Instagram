@@ -86,6 +86,15 @@ public class UserService {
         userRepository.save(user);
     }
 
+    /**
+     * Checks if a username already exists in the database
+     * @param username The username to check (stored in the name field)
+     * @return boolean - true if username exists, false otherwise
+     */
+    public boolean isUsernameExists(String userId) {
+        return userRepository.findById(userId).isPresent();
+    }
+
     private void setSingedURLInPosts(List<Post> posts) {
         for(Post post: posts) {
             try {
