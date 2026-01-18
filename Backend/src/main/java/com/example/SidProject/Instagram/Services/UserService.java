@@ -92,6 +92,7 @@ public class UserService {
      * @return boolean - true if username exists, false otherwise
      */
     public boolean isUsernameExists(String userId) {
+        System.out.println("user id is " + userId);
         return userRepository.findById(userId).isPresent();
     }
 
