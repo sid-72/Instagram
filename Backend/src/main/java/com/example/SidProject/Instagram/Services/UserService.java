@@ -31,7 +31,6 @@ public class UserService {
 
 
     public UserProfileDTO getUserProfile(String userId) throws RuntimeException {
-        System.out.println("userId is:" + userId);
         User user= userRepository.findById(userId).orElseThrow(()->new RuntimeException("User not found"));
         List<Post> posts = postRepository.findByUserId(userId);
         setSingedURLInPosts(posts);

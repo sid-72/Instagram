@@ -39,7 +39,7 @@ public class UserController {
 
     @PostMapping("/users/login")
     String login(@RequestBody LoginCredentials loginCredentials) {
-        User user = userRepository.getUserByName(loginCredentials.getUsername()).orElse(null);
+        User user = userRepository.findById(loginCredentials.getUsername()).orElse(null);
         if (user == null) {
             return "failed";
         }
