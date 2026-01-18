@@ -16,7 +16,6 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -58,23 +57,24 @@ public class UserService {
     public void addUser(UserDTO userDTO) {
         String userId =  userDTO.getUserId();
         MultipartFile file =  userDTO.getProfileImage();
+        String imagePath = null;
+        if(file != null) {
+            String objectName = userId + "/profilePicture/" + file.getOriginalFilename();
+            try {
+                minioClient.putObject(
+                        PutObjectArgs.builder()
+                                .bucket("sidimagebucket")
+                                .object(objectName)
+                                .stream(file.getInputStream(), file.getSize(), -1)
+                                .contentType(file.getContentType())
+                                .build()
+                );
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
 
-        String objectName = userId + "/profilePicture/" + file.getOriginalFilename();
-
-        try {
-            minioClient.putObject(
-                    PutObjectArgs.builder()
-                            .bucket("sidimagebucket")
-                            .object(objectName)
-                            .stream(file.getInputStream(), file.getSize(), -1)
-                            .contentType(file.getContentType())
-                            .build()
-            );
-        } catch (Exception e) {
-            throw new RuntimeException(e);
+            imagePath = objectName;
         }
-
-        String imagePath = objectName;
 
         User user = User.builder()
                 .id(userDTO.getUserId())
