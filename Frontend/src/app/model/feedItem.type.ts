@@ -9,4 +9,5 @@ export interface FeedItem {
   caption: string;
   image_path: string;
   comments?: Comment[];
+  imageLoaded?: boolean;
 }

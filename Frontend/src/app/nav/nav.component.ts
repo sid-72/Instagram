@@ -16,7 +16,7 @@ export class NavComponent implements OnInit {
   title = 'Instagram';
 
   constructor(private router: Router, private dialog: MatDialog) { }
-  
+
   ngOnInit(): void {
     console.log('NavComponent initialized');
   }
@@ -31,7 +31,9 @@ export class NavComponent implements OnInit {
       console.log(result);
       console.log('The dialog was closed');
       // Trigger a reload or refresh of the component
-      window.location.reload();
+      if (result) {
+        window.location.reload();
+      }
     });
   }
 }

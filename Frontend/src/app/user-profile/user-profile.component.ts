@@ -6,6 +6,7 @@ import { ActivatedRoute } from '@angular/router';
 import { PostDialogComponent } from '../post-dialog/post-dialog.component';
 import { CommonModule } from '@angular/common';
 import { NavComponent } from '../nav/nav.component';
+import { Profile } from '../model/Profile.type';
 
 @Component({
   selector: 'app-user-profile',
@@ -17,6 +18,7 @@ export class UserProfileComponent {
   posts : FeedItem[] = [];
   userId: string = '';
   name : string = '';
+  user : any = null;
   constructor(
     private UserProfileService: UserProfileService,
     private dialog: MatDialog,
@@ -32,10 +34,11 @@ export class UserProfileComponent {
   // call the service to get the user profile
   getUserProfile(userId: string): void {
     // call the service to get the user profile
-    this.UserProfileService.getFeed(userId).subscribe(response => {
+    this.UserProfileService.getFeed(userId).subscribe((response: Profile) => {
       this.posts = response.postResponses;
-      this.userId = response.user.id;
-      this.name = response.user.name;
+        this.userId = response.user.id;
+        this.name = response.user.name;
+        this.user = response.user;
       console.log('User profile:', response);
     }, error => {
       console.error('Failed to get user profile:', error);
@@ -44,9 +47,9 @@ export class UserProfileComponent {
 
   openPostDialog(post: FeedItem): void {
     this.dialog.open(PostDialogComponent, {
-      width: '600px',
-      height: '300vh',
-      data:  {post: post, userId: this.userId} 
+      width: '800px',
+      maxHeight: '90vh',
+      data:  {post: post, userId: this.userId, user: this.user} 
     });
   }
 

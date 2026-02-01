@@ -1,4 +1,4 @@
-<h2 mat-dialog-title>Add a Post</h2>
+<!-- <h2 mat-dialog-title>Add a Post</h2>
 <div mat-dialog-content>
   Please attach image and add caption
   <input type="file" (change)="onFileSelected($event)" />
@@ -10,4 +10,61 @@
 <div mat-dialog-actions>
   <button mat-button (click)="onCancel()">Cancel</button>
   <button mat-button (click)="onSavePost()">Post</button>
+</div> -->
+
+
+
+<!-- Modal -->
+<div class="modal fade show d-block" tabindex="-1" role="dialog">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+
+      <!-- Header -->
+      <div class="modal-header bg-primary">
+        <h5 class="modal-title">Add a Post</h5>
+        <button
+          type="button"
+          class="btn-close"
+          aria-label="Close"
+          (click)="onCancel()"
+        ></button>
+      </div>
+
+      <!-- Body -->
+      <div class="modal-body">
+        <p class="text-muted">Please attach an image and add a caption</p>
+
+        <!-- Image Upload -->
+        <div class="mb-3">
+          <label class="form-label">Image</label>
+          <input
+            type="file"
+            class="form-control"
+            (change)="onFileSelected($event)"
+          />
+        </div>
+
+        <!-- Caption -->
+        <div class="mb-3">
+          <label class="form-label">Caption</label>
+          <input
+            type="text"
+            class="form-control"
+            placeholder="Write a caption..."
+            (input)="onCaptionInput($event)"
+          />
+        </div>
+      </div>
+
+      <!-- Footer -->
+      <div class="modal-footer">
+        <button class="btn btn-secondary" (click)="onCancel()">Cancel</button>
+        <button class="btn btn-primary" (click)="onSavePost()">Post</button>
+      </div>
+
+    </div>
+  </div>
 </div>
+
+<!-- Backdrop -->
+<div class="modal-backdrop fade show"></div>
